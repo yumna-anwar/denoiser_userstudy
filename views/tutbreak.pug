@@ -1,0 +1,18 @@
+extends layout
+
+block content
+   .main.container.h-100
+     .row.align-items-center.h-100
+       .col-md-4.mx-auto
+       .col-md-4.mx-auto.col-md-offset-3(align='center')
+         h3.display-8.m-b-2 Break in progress
+         br
+         br
+         form(method='POST' action='/ui/demo/practice')
+           input(type='hidden', id='trialNo', name='trialNo', value=trialNo-1)
+           button.btn.btn-info.btn-lg(type='submit') Back To Study
+         br
+         br
+         form(method='GET', action='/ui')
+           button.btn.btn-danger.btn-lg(type='submit') Main Menu
+       .col-md-4.mx-auto

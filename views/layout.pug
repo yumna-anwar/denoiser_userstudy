@@ -1,0 +1,123 @@
+html
+  head
+    block head
+      title= title
+
+
+      link(rel='stylesheet', href='/public/bootstrap-4.3.1-dist/css/bootstrap.min.css', type='text/css')
+      link(rel='stylesheet', href='/public/font-awesome-4.7.0/css/font-awesome.min.css', type='text/css')
+      script(type='text/javascript', src='/public/jquery.min.js')
+      script(type='text/javascript', src='/public/bootstrap/js/bootstrap.min.js')
+      script(type='text/javascript', src='/public/popper.min.js')
+      script(type="text/javascript" src="/public/echarts-en.common.min.js")
+      //script(type='text/javascript', src='/public/node_modules/socket.io/client-dist/socket.io.js')
+      script(type='text/javascript', src="/node_modules/socket.io/client-dist/socket.io.js")
+      //script(type='text/javascript', src="/node_modules/net/index.js")
+
+
+      style.
+        label {
+            font-size: 13px;
+            color: #0E6655;
+        }
+        h6 {
+            font-size: 13px;
+            color: #0E6655;
+        }
+        Input {
+            font-size: 13px;
+            color: #0E6655;
+            text-align: center;
+            display: inline-block;
+
+        }
+
+        button {
+          background-color: #154360;
+          border: none;
+          color: white;
+          padding: 16px 32px;
+          text-align: center;
+          font-size: 16px;
+          margin: 2px 1px;
+          opacity: 0.6;
+          transition: 0.3s;
+          display: inline-block;
+          text-decoration: none;
+          cursor: pointer;
+          border-radius: 12px;
+        }
+        button1 {
+          background-color: #2ECC71;
+          border: none;
+          color: white;
+          padding: 16px 32px;
+          text-align: center;
+          font-size: 16px;
+          margin: 2px 1px;
+          opacity: 0.6;
+          transition: 0.3s;
+          display: inline-block;
+          text-decoration: none;
+          cursor: pointer;
+          border-radius: 12px;
+        }
+        button:hover {opacity: 1}
+
+        p {
+          border: 2px solid black;
+          outline: #154360 solid 10px;
+          opacity: 0.6;
+          margin: auto;
+          padding: 20px;
+          text-align: center;
+        }
+        h8 {
+          font-size: 10px;
+          opacity: 0.6;
+          margin: auto;
+          width: 400px;
+          padding: 10px;
+          text-align: center;
+        }
+        h7 {
+          color:red;
+          font-size: 18px;
+          opacity: 0.6;
+          margin: auto;
+          width: 300px;
+          padding: 20px;
+          text-align: center;
+        }
+        #box {
+          overflow-x:scroll;
+          width: 1000px;
+          height: 100px;
+          display: flex;
+        }
+        #box2 {
+          width: 800px;
+          height: 800px;
+        }
+        #main .container_wrap .container, #main .container_wrap .content{
+            width: 100% !important;
+            margin: 0 !important;
+        }
+        label {
+          display: block;
+          width: 27px;
+          margin-bottom: 0.5em;
+          text-transform: capitalize;
+          font-weight: bold; }
+        option{
+          font-size: 13px;
+          color: #0E6655;
+          width: 2px;
+          text-align: center;
+          display: inline-block;
+
+        }
+  body
+    block content
+    block trackback
+    block help

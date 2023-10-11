@@ -1,0 +1,66 @@
+{
+    "title" : {
+        "text": "Gain values",
+        "subtext": "Gain at each input level"
+    },
+    "tooltip" : {
+        "trigger": "axis"
+    },
+    "legend": {
+        "data":["#responses"]
+    },
+    "toolbox": {
+        "show" : false
+    },
+    "calculable" : true,
+    "xAxis" : [
+        {
+            "type" : "category",
+            "data" : [0,0,0,0]
+        }
+    ],
+    "yAxis" : [
+        {
+            "type" : "value",
+            "data" : [2.0, 4.9, 7.0, 23.2]
+        }
+    ],
+    "legend": [{
+	    	"data": ["Left Gains", "Right Gains"]
+      }
+	    ],
+    "series" : [
+        {
+            "name":"Left Gains",
+            "type":"line",
+            "data":[2.0, 4.9, 7.0, 23.2],
+            "markPoint" : {
+                "data" : [
+                    {"type" : "max", "name": "Highest Gain"},
+                    {"type" : "min", "name": "Lowest Gain"}
+                ]
+            },
+            "markLine" : {
+                "data" : [
+                    {"type" : "average", "name": "average"}
+                ]
+            }
+        },
+        {
+            "name":"Right Gains",
+            "type":"line",
+            "data":[2.0, 4.9, 7.0, 23.2],
+            "markPoint" : {
+                "data" : [
+                    {"type" : "max", "name": "Highest Gain"},
+                    {"type" : "min", "name": "Lowest Gain"}
+                ]
+            },
+            "markLine" : {
+                "data" : [
+                    {"type" : "average", "name": "average"}
+                ]
+            }
+        }
+    ]
+}

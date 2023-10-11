@@ -1,0 +1,20 @@
+extends layout
+block append head
+    script.
+      function read_config() {
+        console.log("Button clicked");
+        document.getElementById("buttonA").style.backgroundColor='red';
+        document.getElementById("gaintext").innerHTML="test successfull"
+      }
+
+
+block content
+   .container
+     .row.justify-content-center
+       .col-1
+       .col-10(align='center')
+         .row(id='playOptions').justify-content-center
+            .col-12(align='center')
+              button(id='buttonA', onClick='read_config()').btn.btn-lg.btn-block.btn-secondary Test Function
+              h3(id='gaintext', style='display:block').display-12.m-b-2 text
+              br

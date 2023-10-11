@@ -1,0 +1,36 @@
+extends layout
+block append head
+
+  script.
+    var grid_on=false;
+
+block content
+  .main.container
+    br
+    .row.justify-content-center
+      .col-12(align='center')
+        h2(id='playStatusText', style='display:block').display-12.m-b-2 Denoiser Study
+
+
+        .row(id='playOptions').justify-content-center
+           .col-12(align='center')
+             a.span(id='playStatus', onClick='replayPresets()', style='display:none').fa.fa-repeat.fa-3x
+             h3(id='playStatusText', style='display:block').display-12.m-b-2 Audio will start playing soon...
+             br
+
+             .col-6(align='center')
+               span(id='buttonA').fa.fa-volume-off.fa-cog.fa-3x
+               h3(id='presetAText' align='center') Preset A
+
+             .col-12(align='center')
+               h3(id='playStatusText', style='display:block').display-12.m-b-2 Rate your preference of the denoiser audio on a scale of 0-10, with 0 being not at all preferred and 10 being highly preferred.
+               br
+               br
+
+        .row(id='ratingScale').justify-content-center
+           .col-16(align='center')
+             h3 Rate the Audio:
+             .rating-boxes
+               each num in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                 label(for=`rating${num}`) #{num}
+                 input(type='radio', name='rating', id=`rating${num}`, value=num)

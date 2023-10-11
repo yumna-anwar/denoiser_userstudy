@@ -1,0 +1,59 @@
+extends layout
+block append head
+
+  script.
+    var grid_on=false;
+
+block content
+  .main.container
+    br
+    .row.justify-content-center
+      .col-6(align='center')
+        h2(id='playStatusText', style='display:block').display-12.m-b-2 Adjust Frequency Gains
+
+      br
+      br
+      br
+
+    .row.justify-content-center
+      form(method='POST' action='/adjust/startMHA')
+        button.btn-lg.btn-success( type='submit') Adjust
+
+
+    .row.justify-content-center
+      h8 Selecting 'Adjust' will load an initial configuration file and start the MHA.
+      br
+    .row.justify-content-center
+      h8 You can use this interface to adjust gains in 8 frequency bands (200, 1000, 1500, 2000, 3000, 4000, 5500, 7000) and multiple input levels. The maximum input level is set to 120 dB, and the minimum input level is set to 0 dB.
+      br
+      br
+    br
+    .row.justify-content-center
+      .col-6(align='center')
+        h2(id='playStatusText', style='display:block').display-12.m-b-2 Test RMS level
+      br
+
+    .row.justify-content-center
+      h8 Selecting 'Test' will bring you to a page where you can select speech audio and play it on different RMS level
+      br
+    .row.justify-content-center
+      h8 The sound file will be scaled so that it plays back with the level defined (in dB SPL). openMHA uses the same scaling factor for all audio channels of the sound file based on the RMS level across all channels. Therefore, if different channels inside the sound file have different levels re full scale, then the scaling will result in some channels playing back at a softer level, and some at a higher level than level. The inter-channel level difference in openMHA playback levels will be the same as in the sound file.
+      br
+
+    .row.justify-content-center
+      form(method='POST' action='/setrms/gotorms')
+        button.btn-lg.btn-success( type='submit') Test
+
+    br
+    .row.justify-content-center
+      .col-6(align='center')
+        h2(id='playStatusText', style='display:block').display-12.m-b-2 Test A/B
+      br
+    .row.justify-content-center
+      h8 Selecting 'Test' will bring you to a page where you can hear an audio file with two configurations A and B
+      br
+
+
+    .row.justify-content-center
+      form(method='POST' action='/ui/gotoAB')
+        button.btn-lg.btn-success( type='submit') Test

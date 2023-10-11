@@ -1,0 +1,513 @@
+extends layout
+
+block append head
+    script.
+      var audioA;
+      var audioB;
+      var presetANo;
+      var presetBNo;
+      var audioAPath;
+      var audioBPath;
+      // used to keep track of if audio has been played.
+      // We only need patients to play it just once
+      var trialNo = !{trialNo} + 1;
+      var seed = (new Date).getTime();
+      var playAStatus = 0;
+      var playBStatus = 0;
+      var playAFlag = 0;
+      var playBFlag = 0;
+      var animationToggle = 0;
+      var reasonQuestionId = 'reasonQuestion';
+      var playOptionsId = 'playOptions';
+      var questionOneId = 'questionOne';
+      var questionTwoId = 'questionTwo';
+      var reason1AId = 'reason1A';
+      var reason1BId = 'reason1B';
+      var reason2AId = 'reason2A';
+      var reason2BId = 'reason2B';
+      var reason3AId = 'reason3A';
+      var reason3BId = 'reason3B';
+      var reason3CId = 'reason3C';
+      var buttonAId = 'buttonA';
+      var buttonBId = 'buttonB';
+      var preferAId = 'preferA';
+      var preferBId = 'preferB';
+      var presetATextId = 'presetAText';
+      var presetBTextId = 'presetBText';
+      var playStatusId = 'playStatus';
+      var trialNoHeaderId = 'trialNoHeader';
+      var submitButtonId = 'submitButton';
+      var playStatusTextId = 'playStatusText';
+      var actions = new Array(0);
+      var choices = new Array(0);
+      var datetimeNow;
+      var dt;
+      // preserves state of survey
+      var state = 0;
+      var ABSelection = 0;
+      var reason1AOption = 0;
+      var reason1BOption = 0;
+      var reason2AOption = 0;
+      var reason2BOption = 0;
+      var reason3AOption = 0;
+      var reason3BOption = 0;
+      var reason3COption = 0;
+      //generate right config
+      var noCombs = 420;
+      var demoCombs = 5;
+      var configComb = new Array(0);
+      var count = 0;
+      var noConfigs = 15;
+      var sentenceNo;
+      // if currently playing
+      var playStatus = 0;
+      // study set related variable
+      var sets = [52, 53, 52, 53, 52, 53, 52, 53];
+      var question = '';
+      // random functions
+      function Random(seed) {
+        this._seed = seed % 2147483647;
+        if (this._seed <= 0) this._seed += 2147483646;
+      }
+      /**
+       * Returns a pseudo-random value between 1 and 2^32 - 2.
+       */
+      Random.prototype.next = function () {
+        return this._seed = this._seed * 16807 % 2147483646;
+      };
+
+      Random.prototype.nextFloat = function (opt_minOrMax, opt_max) {
+        // We know that result of next() will be 1 to 2147483646 (inclusive).
+        return (this.next() - 1) / 2147483646;
+      };
+
+      function shuffleArray(array)
+      {
+      		var random = new Random(seed);
+      		console.log('Seed is : ', seed);
+          for (var i = array.length - 1; i > 0; i--) {
+              var j = Math.floor(random.nextFloat() * (i + 1));
+              var temp = array[i];
+              array[i] = array[j];
+              array[j] = temp;
+          }
+          for(var i = 0;i < array.length;i++){
+            console.log(array[i]);
+          }
+      }
+      // function to calculate set no and other info
+      function getSetText(){
+        setText = 'Set 1'+': '+trialNo.toString()+'/'+demoCombs.toString();
+        return setText;
+      }
+      // function create combs
+      function createCombs()
+      {
+        var random = new Random(seed);
+        for(var iTemp=1;iTemp<noConfigs;iTemp++)
+      	{
+      		for(var iTemp2=iTemp+1;iTemp2<noConfigs+1;iTemp2++)
+      		{
+            var rng = randomInt(1,4,random.nextFloat());
+      			configComb.push([iTemp, iTemp2, rng]);
+            rng = randomInt(1,4,random.nextFloat());
+            configComb.push([iTemp, iTemp2, rng]);
+            rng = randomInt(1,4,random.nextFloat());
+            configComb.push([iTemp2, iTemp, rng]);
+            rng = randomInt(1,4,random.nextFloat());
+            configComb.push([iTemp2, iTemp, rng]);
+      			console.log(configComb[count]);
+      			count++;
+      		}
+      	}
+      }
+      // function shuffle combs
+      function shuffleCombs(){
+        shuffleArray(configComb);
+      }
+      // function to hide / show elements
+      function hideElement(elementIdStr){
+          document.getElementById(elementIdStr).style.display = 'none';
+      }
+      function showElement(elementIdStr){
+          document.getElementById(elementIdStr).style.display = 'block';
+      }
+      // play A function
+      function playA()
+      {
+        audioA.play();
+        playStatus = 1;
+        animationToggle = 0;
+        document.getElementById(buttonAId).className = "fa fa-cog fa-volume-down fa-3x";
+        document.getElementById(buttonAId).style = "color:blue";
+        document.getElementById(presetATextId).style = "color:blue";
+        document.getElementById(playStatusTextId).innerHTML = 'Playing Preset A';
+        setTimeout(playAAnimation, 500);
+      }
+      // playB function
+      function playB()
+      {
+        audioB.play();
+        playStatus = 1;
+        animationToggle = 0;
+        document.getElementById(buttonBId).className = "fa fa-cog fa-volume-down fa-3x";
+        document.getElementById(buttonBId).style = "color:blue";
+        document.getElementById(presetBTextId).style = "color:blue";
+        document.getElementById(playStatusTextId).innerHTML = 'Playing Preset B';
+        setTimeout(playBAnimation, 500);
+      }
+      // playA animation
+      function playAAnimation(){
+        if(playStatus == 1){
+          if(animationToggle == 0){
+            document.getElementById(buttonAId).className = "fa fa-cog fa-volume-up fa-3x";
+            animationToggle = 1;
+          } else {
+            document.getElementById(buttonAId).className = "fa fa-cog fa-volume-down fa-3x";
+            animationToggle = 0;
+          }
+          setTimeout(playAAnimation, 500);
+        }
+      }
+      // playB animation
+      function playBAnimation(){
+        if(playStatus == 1){
+          if(animationToggle == 0){
+            document.getElementById(buttonBId).className = "fa fa-cog fa-volume-up fa-3x";
+            animationToggle = 1;
+          } else {
+            document.getElementById(buttonBId).className = "fa fa-cog fa-volume-down fa-3x";
+            animationToggle = 0;
+          }
+          setTimeout(playBAnimation, 500);
+        }
+      }
+      // when prefer A is preferA is preferA
+      function preferAClicked(){
+        if(playAFlag == 1 && playBFlag == 1)
+        {
+         document.getElementById(preferAId).className = "btn btn-lg btn-block btn-primary";
+         document.getElementById(preferBId).className = "btn btn-lg btn-block btn-secondary";
+         ABSelection = 0;
+         submitClicked();
+        }
+        dt = new Date().toISOString();
+        datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+        actions.push([trialNo, "SelectPresetA", datetimeNow]);
+      }
+      function preferBClicked(){
+        if(playAFlag == 1 && playBFlag == 1)
+        {
+         document.getElementById(preferBId).className = "btn btn-lg btn-block btn-primary";
+         document.getElementById(preferAId).className = "btn btn-lg btn-block btn-secondary";
+         ABSelection = 1;
+         submitClicked();
+        }
+        dt = new Date().toISOString();
+        datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+        actions.push([trialNo, "SelectPresetB", datetimeNow]);
+      }
+      // when reason 1A/1B is selected.
+      function reason1AClicked()
+      {
+          if(reason1AOption == 0)
+          {
+            document.getElementById(reason1AId).className = "btn btn-lg btn-block btn-primary";
+            reason1AOption = 1;
+            dt = new Date().toISOString();
+            datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+            actions.push([trialNo, "SelectTooLoud", datetimeNow]);
+          } else {
+            document.getElementById(reason1AId).className = "btn btn-lg btn-block btn-secondary";
+            reason1AOption = 0;
+            dt = new Date().toISOString();
+            datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+            actions.push([trialNo, "UnselectTooLoud", datetimeNow]);
+          }
+      }
+      function reason1BClicked(){
+        if(reason1BOption == 0)
+        {
+          document.getElementById(reason1BId).className = "btn btn-lg btn-block btn-primary";
+          reason1BOption = 1;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "SelectTooSoft", datetimeNow]);
+        } else {
+          document.getElementById(reason1BId).className = "btn btn-lg btn-block btn-secondary";
+          reason1BOption = 0;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "UnselectTooSoft", datetimeNow]);
+        }
+      }
+      // when reason 2A/2B is selected
+      function reason2AClicked()
+      {
+        if(reason2AOption == 0)
+        {
+          document.getElementById(reason2AId).className = "btn btn-lg btn-block btn-primary";
+          reason2AOption = 1;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "SelectNotClearMuffled", datetimeNow]);
+        } else {
+          document.getElementById(reason2AId).className = "btn btn-lg btn-block btn-secondary";
+          reason2AOption = 0;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "SelectNotClearMuffled", datetimeNow]);
+        }
+      }
+      function reason2BClicked(){
+        if(reason2BOption == 0)
+        {
+          document.getElementById(reason2BId).className = "btn btn-lg btn-block btn-primary";
+          reason2BOption = 1;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "SelectNotNatural", datetimeNow]);
+        } else {
+          document.getElementById(reason2BId).className = "btn btn-lg btn-block btn-secondary";
+          reason2BOption = 0;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "UnselectNotNatural", datetimeNow]);
+        }
+      }
+      // when reason 3A/3B/3C is selected
+      function reason3AClicked()
+      {
+        if(reason3AOption == 0)
+        {
+          document.getElementById(reason3AId).className = "btn btn-lg btn-block btn-primary";
+          reason3AOption = 1;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "SelectTooTinnySharpHarsh", datetimeNow]);
+        } else {
+          document.getElementById(reason3AId).className = "btn btn-lg btn-block btn-secondary";
+          reason3AOption = 0;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "UnselectTooTinnySharpHarsh", datetimeNow]);
+        }
+      }
+      function reason3BClicked(){
+        if(reason3BOption == 0)
+        {
+          document.getElementById(reason3BId).className = "btn btn-lg btn-block btn-primary";
+          reason3BOption = 1;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "SelectTooHollowBoomy", datetimeNow]);
+        } else {
+          document.getElementById(reason3BId).className = "btn btn-lg btn-block btn-secondary";
+          reason3BOption = 0;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "UnselectTooHollowBoomy", datetimeNow]);
+        }
+      }
+      function reason3CClicked(){
+        if(reason3COption == 0)
+        {
+          document.getElementById(reason3CId).className = "btn btn-lg btn-block btn-primary";
+          reason3COption = 1;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "SelectNoneOfTheAbove", datetimeNow]);
+        } else {
+          document.getElementById(reason3CId).className = "btn btn-lg btn-block btn-secondary";
+          reason3COption = 0;
+          dt = new Date().toISOString();
+          datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+          actions.push([trialNo, "UnselectNoneOfTheAbove", datetimeNow]);
+        }
+      }
+      // post function
+      function post(path, params, method='post') {
+          // The rest of this code assumes you are not using a library.
+          // It can be made less wordy if you use one.
+          const form = document.createElement('form');
+          form.method = method;
+          form.action = path;
+          for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+              const hiddenField = document.createElement('input');
+              hiddenField.type = 'hidden';
+              hiddenField.name = key;
+              hiddenField.value = params[key];
+              form.appendChild(hiddenField);
+            }
+          }
+          document.body.appendChild(form);
+          form.submit();
+        }
+
+      function submitClicked(){
+          // to do when audio is done playing
+          if (state == 1)
+          {
+              question = 'Why did you reject the other option ? The other option was ';
+              if(ABSelection == 0)
+              {
+                question += 'B. ';
+              } else {
+                question += 'A. ';
+              }
+              document.getElementById(reasonQuestionId).innerHTML = question;
+              hideElement(questionOneId);
+              showElement(questionTwoId);
+              showElement(submitButtonId);
+              state = 2;
+              dt = new Date().toISOString();
+              datetimeNow = dt.split('T')[0]+' '+dt.split('T')[1].split('.')[0];
+              actions.push([trialNo, "ABOptionsSubmitted", datetimeNow]);
+          }  else if (state == 2) {
+              // api call for submission
+              //window.location.href = "/study/start";
+              choices.push(ABSelection);
+              choices.push(reason1AOption);
+              choices.push(reason1BOption);
+              choices.push(reason2AOption);
+              choices.push(reason2BOption);
+              choices.push(reason3AOption);
+              choices.push(reason3BOption);
+              choices.push(presetANo);
+              choices.push(presetBNo);
+              choices.push(sentenceNo);
+              console.log(JSON.stringify(choices));
+              console.log(JSON.stringify(actions));
+              //alert("Next choice will be presented now.");
+              actions.push([trialNo, "ReasonSubmitted", datetimeNow]);
+              post("/study_ui/demo/practice", {trialNo: trialNo});
+          }
+      }
+      // function to present questions
+      function presentQuestion1(){
+        if(playAFlag == 1 && playBFlag == 1 && state == 0){
+         showElement(questionOneId);
+         state = 1;
+        }
+      }
+      // when pause it clicked
+      function pauseClicked(){
+        post("/ui/demo/break", {trialNo: trialNo});
+      }
+      // random int function
+      function randomInt(min, max, rno){
+        return min + Math.floor(rno * (max - min + 1));
+      }
+      // replayPresets
+      function replayPresets(){
+        hideElement(playStatusId);
+        playA();
+      }
+      // executes once webpage is fully loaded
+      window.onload = function (){
+              // set trial no header
+              document.getElementById(trialNoHeaderId).innerHTML = getSetText();
+              // if all the combinations are answered.
+              if(trialNo > demoCombs)
+              {
+                alert('You have finished the practice.');
+                post('/ui', {}, method='get');
+              }
+              state = 0;
+              createCombs();
+              shuffleCombs();
+              presetANo = configComb[trialNo-1][0];
+              presetBNo = configComb[trialNo-1][1];
+              sentenceNo = configComb[trialNo-1][2];
+              console.log('Preset A is : ', presetANo);
+              console.log('Preset B is : ', presetBNo);
+              console.log('SentenceNo is : ', sentenceNo);
+              audioAPath = '../../public/stimulisentences/C'+presetANo.toString()+'_'+sentenceNo.toString()+'.wav';
+              audioBPath = '../../public/stimulisentences/C'+presetBNo.toString()+'_'+sentenceNo.toString()+'.wav';
+              audioA = new Audio(audioAPath);
+              audioB = new Audio(audioBPath);
+              // event listener ended for Audio A
+              audioA.addEventListener("ended", function() {
+                   playStatus = 0;
+                   document.getElementById(buttonAId).className = "fa fa-cog fa-volume-off fa-3x";
+                   document.getElementById(buttonAId).style = "color:black";
+                   document.getElementById(presetATextId).style = "color:black";
+                   playAFlag = 1;
+                   presentQuestion1();
+                   setTimeout("playB()", 1500);
+                });
+              // event listener ended for Audio B
+              audioB.addEventListener("ended", function() {
+                   playStatus = 0;
+                   document.getElementById(buttonBId).className = "fa fa-cog fa-volume-off fa-3x";
+                   document.getElementById(buttonBId).style = "color:black";
+                   document.getElementById(presetBTextId).style = "color:black";
+                   playBFlag = 1;
+                   presentQuestion1();
+                   showElement(playStatusId);
+                   document.getElementById(playStatusTextId).innerHTML = ' Replay';
+                });
+              //start timer
+              setTimeout ("playA()", 1500);
+            };
+
+block content
+   .container
+     .row.justify-content-center
+       .col-1
+       .col-10(align='center')
+         h3.display-8.m-b-2 Simulator Study (Practice)
+         br
+         h3(id='trialNoHeader').display-12.m-b-2 -
+         br
+         .row(id='playOptions').justify-content-center
+            .col-12(align='center')
+              a.span(id='playStatus', onClick='replayPresets()', style='display:none').fa.fa-repeat.fa-3x
+              h3(id='playStatusText', style='display:block').display-12.m-b-2 Presets will start playing soon...
+              br
+            br
+            .col-6(align='center')
+              span(id='buttonA').fa.fa-volume-off.fa-cog.fa-3x
+              h3(id='presetAText' align='center') Preset A
+            .col-6(align='center')
+              span(id='buttonB').fa.fa-volume-off.fa-cog.fa-3x
+              h3(id='presetBText' align='center') Preset B
+         br
+         .row(id='questionOne' style='display:none')
+            .col-12(align='center')
+              h3.display-10.m-b-2 Question : Which one do you prefer the most ?
+              br
+              .row
+                .col-6(align='center')
+                  button(id='preferA', onClick='preferAClicked()').btn.btn-lg.btn-block.btn-secondary A
+                .col-6(align='center')
+                  button(id='preferB', onClick='preferBClicked()').btn.btn-lg.btn-block.btn-secondary B
+         .row(id='questionTwo' style='display:none')
+            .col-12(align='center')
+              h4(id='reasonQuestion').display-12.m-b-2 Why did you reject the other option?
+              h4.display-12.m-b-2 (Select all that applies. If none applies, select None of the above option.)
+              br
+              .row
+                .col-4(align='center')
+                  button(id='reason1A', onClick='reason1AClicked()').btn.btn-lg.btn-block.btn-secondary Too loud
+                  br
+                  button(id='reason1B', onClick='reason1BClicked()').btn.btn-lg.btn-block.btn-secondary Too soft
+                  br
+                .col-4(align='center')
+                  button(id='reason2A', onClick='reason2AClicked()').btn.btn-lg.btn-block.btn-secondary Not clear/muffled
+                  br
+                  button(id='reason2B', onClick='reason2BClicked()').btn.btn-lg.btn-block.btn-secondary Not natural
+                  br
+                  button(id='reason3C', onClick='reason3CClicked()').btn.btn-lg.btn-block.btn-secondary None of the above
+                  br
+                .col-4(align='center')
+                  button(id='reason3A', onClick='reason3AClicked()').btn.btn-lg.btn-block.btn-secondary Too tinny/sharp/harsh
+                  br
+                  button(id='reason3B', onClick='reason3BClicked()').btn.btn-lg.btn-block.btn-secondary Too hollow/boomy
+                  br
+         a(href='javascript:void(0);', onClick='submitClicked()', style='display:none', id='submitButton').button.btn.btn-lg.btn-success Submit Answer
+         br
+       .col-1(align='center')
+         br
+         a(href='javascript:void(0);', onClick='pauseClicked()').button.btn.btn-lg.btn-info Pause Study

@@ -1,0 +1,20 @@
+extends layout
+
+block content
+   .main.container
+     .row
+       .col-md-3
+       .col-md-6.col-md-offset-3(align='center')
+         h3.display-4.m-b-2 Simulator Study
+         h3.display-4.m-b-2 Log In
+         br
+         br
+         form(method='POST' action='login/credentials')
+           div.form-group
+             label(for='username') User
+             input.form-control(type='text' id='user' placeholder='user' name='user' size='20')
+           div.form-group
+             label(for='password') Password
+             input.form-control(type='password' id='password' placeholder='password' name='password' size='20')
+           button.btn.btn-lg.btn-success(type='submit') Log in
+       .col-md-3

@@ -1,0 +1,27 @@
+{
+  "name": "simulator-openmha",
+  "version": "1.0.0",
+  "description": "opneMHA simulator",
+  "main": "app.js",
+  "dependencies": {
+    "better-sqlite3": "^7.1.4",
+    "cookie-parser": "^1.4.5",
+    "echarts": "^5.0.2",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "morgan": "^1.10.0",
+    "net": "^1.0.2",
+    "node-clone-js": "^1.0.0",
+    "pug": "^3.0.2",
+    "serve-favicon": "^2.5.0",
+    "simple-linear-interpolation": "^1.0.5",
+    "socket.io": "^3.1.2",
+    "socket.io-client": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node app"
+  },
+  "author": "Yumna Anwar",
+  "license": "ISC"
+}
